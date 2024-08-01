@@ -1,21 +1,24 @@
 #!/usr/bin/python3
-"""Defines a function that determines if a box containing a list
-   of lists can be opened using keys stored in the lists
+from collections import deque
+
+""" Checks if a box containing boxes (list of lists) can be unlocked
+    using the keys in each sub boxes
 """
 
 
 def canUnlockAll(boxes):
-    """Determines if boxes can be unlocked"""
-    position = 0
-    unlocked = {}
+    """ Checks if the sub-boxess can ALL be unlocked """
 
-    for box in boxes:
-        if len(box) == 0 or position == 0:
-            unlocked[position] = "always_unlocked"
-        for key in box:
-            if key < len(boxes) and key != position:
-                unlocked[key] = key
-        if len(unlocked) == len(boxes):
-            return True
-        position += 1
-    return False
+    n = len(boxes)
+    unlocked = [False] * n
+    unlocked[0] = True
+    queue = deque([0])
+
+    while queue:
+        box = queue.popleft()
+        for key in boxes[box]:
+            if key < n and not unlocked[key]:
+                unlocked[key] = True
+                queue.append(key)
+
+    return all(unlocked)
